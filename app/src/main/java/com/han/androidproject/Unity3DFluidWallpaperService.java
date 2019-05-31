@@ -8,6 +8,7 @@ package com.han.androidproject;
  *
  * @version V1.0
  */
+
 import android.annotation.TargetApi;
 import android.app.WallpaperColors;
 import android.content.res.Configuration;
@@ -22,67 +23,56 @@ import android.content.Context;
 
 import com.unity3d.player.UnityPlayer;
 
-class MyUnityPlayer extends UnityPlayer
-{
-    public MyUnityPlayer (Context var)
-    {
-        super(var);
-    }
-}
-
-public class Unity3DFluidWallpaperService extends WallpaperService
-{
-    MyUnityPlayer mUnityPlayer;
+public class Unity3DFluidWallpaperService extends WallpaperService {
+    FluidUnityPlayer mUnityPlayer;
     int mVisibleSurfaces = 0;
 
-    @Override public void onCreate ()
-    {
+    @Override
+    public void onCreate() {
         super.onCreate();
-        mUnityPlayer = new MyUnityPlayer(getApplicationContext());
+        mUnityPlayer = new FluidUnityPlayer(getApplicationContext());
     }
 
-    @Override public void onDestroy ()
-    {
+    @Override
+    public void onDestroy() {
         mUnityPlayer.quit();
         super.onDestroy();
     }
 
-    @Override public Engine onCreateEngine ()
-    {
-        return new MyEngine();
+    @Override
+    public Engine onCreateEngine() {
+        return new Unity3DFluidEngine();
     }
 
-    @Override public void onLowMemory ()
-    {
+    @Override
+    public void onLowMemory() {
         super.onLowMemory();
         mUnityPlayer.lowMemory();
     }
 
-    @Override public void onTrimMemory(int level)
-    {
+    @Override
+    public void onTrimMemory(int level) {
         super.onTrimMemory(level);
         if (level == TRIM_MEMORY_RUNNING_CRITICAL)
             mUnityPlayer.lowMemory();
     }
 
-    @Override public void onConfigurationChanged (Configuration newConfig)
-    {
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mUnityPlayer.configurationChanged(newConfig);
     }
 
-    void Log (String message)
-    {
+    void Log(String message) {
         Log.d("LiveWallpaper", message);
     }
 
-    class MyEngine extends Engine
-    {
+    class Unity3DFluidEngine extends Engine {
         SurfaceHolder mHolder;
         boolean isPreview = false;
 
-        @Override public void onCreate (SurfaceHolder holder)
-        {
+        @Override
+        public void onCreate(SurfaceHolder holder) {
             Log("Create");
             super.onCreate(holder);
             isPreview = isPreview();
@@ -91,14 +81,15 @@ public class Unity3DFluidWallpaperService extends WallpaperService
             mUnityPlayer.UnitySendMessage("AppController", "TriggerIsWallpaper", isPreview ? "true" : "false");
         }
 
-        @Override public void onDestroy ()
-        {
+        @Override
+        public void onDestroy() {
             Log("Destroy");
             super.onDestroy();
         }
 
-        @Override public void onApplyWindowInsets (WindowInsets insets)
-        {
+        @Override
+        public void onApplyWindowInsets(WindowInsets insets) {
+            Log("onApplyWindowInsets");
             super.onApplyWindowInsets(insets);
             int insetTop = 40;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
@@ -109,34 +100,34 @@ public class Unity3DFluidWallpaperService extends WallpaperService
         }
 
         @TargetApi(Build.VERSION_CODES.O_MR1)
-        @Override public WallpaperColors onComputeColors ()
-        {
+        @Override
+        public WallpaperColors onComputeColors() {
+            Log("onComputeColors");
             Color color = Color.valueOf(Color.BLACK);
             return new WallpaperColors(color, color, color);
         }
 
-        @Override public void onSurfaceCreated (SurfaceHolder holder)
-        {
+        @Override
+        public void onSurfaceCreated(SurfaceHolder holder) {
             Log("SurfaceCreated");
             super.onSurfaceCreated(holder);
             mHolder = holder;
         }
 
-        @Override public void onSurfaceChanged (SurfaceHolder holder, int format, int width, int height)
-        {
+        @Override
+        public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             Log("SurfaceChanged, width: " + width + ", height: " + height);
             super.onSurfaceChanged(holder, format, width, height);
             mHolder = holder;
             mUnityPlayer.displayChanged(0, mHolder.getSurface());
         }
 
-        @Override public void onVisibilityChanged (boolean visible)
-        {
+        @Override
+        public void onVisibilityChanged(boolean visible) {
             Log("VisibilityChanged, isPreview: " + isPreview + ", visible: " + visible);
             super.onVisibilityChanged(visible);
 
-            if (visible)
-            {
+            if (visible) {
                 mVisibleSurfaces++;
                 if (mHolder != null)
                     mUnityPlayer.displayChanged(0, mHolder.getSurface());
@@ -148,24 +139,31 @@ public class Unity3DFluidWallpaperService extends WallpaperService
 
             mVisibleSurfaces--;
             mVisibleSurfaces = Math.max(mVisibleSurfaces, 0);
-            if (mVisibleSurfaces == 0)
-            {
+            if (mVisibleSurfaces == 0) {
                 mUnityPlayer.displayChanged(0, null);
                 mUnityPlayer.windowFocusChanged(false);
                 mUnityPlayer.pause();
             }
         }
 
-        @Override public void onSurfaceDestroyed (SurfaceHolder holder)
-        {
+        @Override
+        public void onSurfaceDestroyed(SurfaceHolder holder) {
             Log("SurfaceDestroyed");
             super.onSurfaceDestroyed(holder);
         }
 
-        @Override public void onTouchEvent (MotionEvent event)
-        {
+        @Override
+        public void onTouchEvent(MotionEvent event) {
             super.onTouchEvent(event);
             mUnityPlayer.injectEvent(event);
         }
     }
+
+
+    class FluidUnityPlayer extends UnityPlayer {
+        public FluidUnityPlayer(Context var) {
+            super(var);
+        }
+    }
+
 }

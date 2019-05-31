@@ -39,7 +39,8 @@ public class UnityPlayerActivity extends Activity {
             localIntent2 = new Intent("android.service.wallpaper.CHANGE_LIVE_WALLPAPER");
         }
         try {
-            localIntent2.putExtra("android.service.wallpaper.extra.LIVE_WALLPAPER_COMPONENT", localComponentName);
+            localIntent2.putExtra("android.service.wallpaper.extra.LIVE_WALLPAPER_COMPONENT",
+                    localComponentName);
             mActivity.startActivity(localIntent2);
             return;
         } catch (ActivityNotFoundException e1) {
@@ -148,11 +149,12 @@ public class UnityPlayerActivity extends Activity {
 
     public void onWindowFocusChanged(boolean paramBoolean) {
         super.onWindowFocusChanged(paramBoolean);
-        Object localObject = this.mUnityPlayer;
-        localObject = new StringBuilder();
-        ((StringBuilder) localObject).append("");
-        ((StringBuilder) localObject).append(isOrientationLocked());
-        UnityPlayer.UnitySendMessage("AppController", "ReceiveOrientationLock", ((StringBuilder) localObject).toString());
+        StringBuilder localObject = new StringBuilder();
+        localObject.append("");
+        localObject.append(isOrientationLocked());
+        UnityPlayer.UnitySendMessage("AppController",
+                "ReceiveOrientationLock",
+                localObject.toString());
         this.mUnityPlayer.windowFocusChanged(paramBoolean);
     }
 }
