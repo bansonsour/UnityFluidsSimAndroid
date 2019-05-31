@@ -30,7 +30,7 @@ class MyUnityPlayer extends UnityPlayer
     }
 }
 
-public class WallpaperActivity extends WallpaperService
+public class Unity3DFluidWallpaperService extends WallpaperService
 {
     MyUnityPlayer mUnityPlayer;
     int mVisibleSurfaces = 0;

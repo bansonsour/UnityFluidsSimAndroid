@@ -21,6 +21,9 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 
 import com.unity3d.player.UnityPlayer;
 
@@ -32,7 +35,7 @@ public class UnityPlayerActivity extends Activity {
         ComponentName localComponentName = null;
         Intent localIntent2 = null;
         if (Build.VERSION.SDK_INT >= 16) {
-            localComponentName = new ComponentName(mActivity, WallpaperActivity.class);
+            localComponentName = new ComponentName(mActivity, Unity3DFluidWallpaperService.class);
             localIntent2 = new Intent("android.service.wallpaper.CHANGE_LIVE_WALLPAPER");
         }
         try {
@@ -74,7 +77,14 @@ public class UnityPlayerActivity extends Activity {
         requestWindowFeature(1);
         super.onCreate(paramBundle);
         this.mUnityPlayer = new UnityPlayer(this);
-        setContentView(this.mUnityPlayer);
+        setContentView(R.layout.activity_main);
+        ((ViewGroup) findViewById(R.id.content_rl)).addView(this.mUnityPlayer);
+        findViewById(R.id.set_wallpaper).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SetLiveWallpaper();
+            }
+        });
         this.mUnityPlayer.requestFocus();
         mActivity = this;
     }

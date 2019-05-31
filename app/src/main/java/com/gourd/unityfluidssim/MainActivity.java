@@ -1,4 +1,4 @@
-package com.han.androidproject;
+package com.gourd.unityfluidssim;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,8 +9,6 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import com.unity3d.player.UnityPlayerActivity;
 
 
 public class MainActivity extends Activity {
